@@ -382,9 +382,9 @@ int main(){
     }
     listen(sockfd,5);
     conn=mysql_init(NULL);
-    if(!mysql_real_connect(conn,"localhost","root","12345","todo_db",3306,NULL,0)){
-        std::cerr<<"Database connection failed\n";
-         return 1;
+    if(!mysql_real_connect(conn,"172.24.192.1","root","12345","todo_db",3306,NULL,0)){
+        std::cerr<<"Database connection failed: "<< mysql_error(conn)<< "\n";
+        return 1;
     }
     std::cout <<"server running on http://localhost:5000\n";
     router["POST"]["/create"]=handleCreate;
