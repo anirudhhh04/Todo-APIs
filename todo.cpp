@@ -72,11 +72,8 @@ using Handler=std::function<void(Request&,Response&)>; //handler type for routin
 using Middleware=std::function<bool(Request&,Response&)>; //middleware type
 std::unordered_map<std::string,std::unordered_map<std::string,Handler>> router; //used to map method to handler function
 std::vector<Middleware>middlewares;
-//std::unordered_map<int,todo> T; //for storage
-//std::atomic<int> id{1}; //prevents race condition
-//std::mutex dataMutex; //mutex for finding and changing the data
 std::mutex logMutex; //mutex for logging
-//for exctracting method and path
+//for extracting method and path
 void parseLine(const std::string &request, std::string &method, std::string &path){
     std::stringstream ss(request);
     ss >> method >> path;
@@ -84,10 +81,15 @@ void parseLine(const std::string &request, std::string &method, std::string &pat
 //for getting id from query
 int getId(const std::string &path){
     size_t p=path.find("id=");
-    if(p!=std::string::npos){
+    if(p==std::string::npos){
+        return -1;
+    }
+    try{
         return std::stoi(path.substr(p + 3));
     }
-    return -1;
+    catch(const std::exception&){
+        return -1;
+    }
 }
 void parseHeaders(const std::string& headersText, Request& req){
     std::stringstream ss(headersText);
@@ -265,12 +267,12 @@ void handleCreate(Request&req,Response&res){
 void handleGet(Request&req,Response&res){
             int idd=getId(req.path);
             if(idd<1){
-                    json er;
-                    er["error"] = "Invalid ID";
-                    res.statusCode = 400;
-                    res.statusText = "Bad Request";
-                    res.body = er.dump();
-                    return;
+                json er;
+                er["error"] = "Invalid ID";
+                res.statusCode = 400;
+                res.statusText = "Bad Request";
+                res.body = er.dump();
+                return;
             }
             MYSQL* conn = acquireConnection();
             std::string query="SELECT id,title,status FROM todo WHERE id="+std::to_string(idd);
@@ -625,7 +627,7 @@ int main(){
     //connection pool
     for(int i=0;i<4;i++)  {  //4 mysql connection simultaneously
                 MYSQL* conn=mysql_init(NULL);
-                if(!mysql_real_connect( conn, "172.24.192.1", "root", "12345", "todo_db", 3306, NULL,0)) {
+                if(!mysql_real_connect( conn, "172.24.192.1", "root", "PASSWORD", "todo_db", 3306, NULL,0)) {
                         std::cerr<<"Database connection failed: " <<mysql_error(conn) <<"\n";
                         return 1;
                 }
