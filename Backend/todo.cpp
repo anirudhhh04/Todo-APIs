@@ -506,7 +506,6 @@ void handleGetAll(Request &req, Response &res){
             MYSQL* conn = acquireConnection();
             std::string query = "SELECT id, title, status FROM todo";
             if(mysql_query(conn, query.c_str()) != 0){
-                std::cout << "MYSQL ERROR: " << mysql_error(conn)<< std::endl;
                json er;
                er["error"] = mysql_error(conn);
                res.statusCode = 500;
@@ -517,7 +516,6 @@ void handleGetAll(Request &req, Response &res){
             }
             MYSQL_RES* result = mysql_store_result(conn);
             if(result == nullptr){
-                std::cout << "STORE RESULT ERROR: "<< mysql_error(conn)<< std::endl;
                json er;
                er["error"] = mysql_error(conn);
                res.statusCode = 500;
@@ -561,7 +559,6 @@ void handleClient(int client_fd){
         Request req;
         Response res;
         req.raw=rawRequest;
-        std::cout << "\n Request:\n"<<rawRequest<<"\n";
         parseLine(req.raw,req.method,req.path);
         req.routePath=req.path; //for handling in router map without id params
         size_t q=req.path.find('?');
