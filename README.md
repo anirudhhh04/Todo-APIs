@@ -1,7 +1,7 @@
 # TaskMake
 
 TaskMake is a full-stack Todo Management application built from scratch using a custom C++ HTTP server and a React frontend.
-This project implements core backend functionalities manually, including HTTP request parsing, routing, middleware handling, thread pooling, and database connection pooling.
+This project implements core backend functionalities manually, including HTTP request parsing, routing, middleware handling and thread pooling.
 
 
 
@@ -15,12 +15,9 @@ This project implements core backend functionalities manually, including HTTP re
 
 ### Frontend
 
-* React
+* React.js
 * CSS
 
-### Database
-
-* MySQL
 
 
 ## API Endpoints
